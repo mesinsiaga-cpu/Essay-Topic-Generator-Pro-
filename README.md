@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧠 Random Essay Topic & AI Prompt Generator</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(135deg, #e1bee7, #bbdefb);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 30px 15px;
+    color: #333;
+  }
+
+  h1 {
+    text-align: center;
+    color: #4a148c;
+    margin-bottom: 10px;
+  }
+
+  p {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  select, button {
+    font-size: 1em;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 2px solid #4a148c;
+    margin: 6px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+
+  select:hover {
+    border-color: #6a1b9a;
+  }
+
+  button {
+    background-color: #6a1b9a;
+    color: #fff;
+  }
+
+  button:hover {
+    background-color: #4a148c;
+    transform: scale(1.05);
+  }
+
+  #topic-box, #prompt-box {
+    background: #ffffffcc;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+    max-width: 600px;
+    margin-top: 25px;
+  }
+
+  #topic {
+    font-size: 1.3em;
+    color: #311b92;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+
+  #prompt {
+    background: #f3e5f5;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    color: #333;
+    text-align: left;
+    white-space: pre-wrap;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  #copy-btn {
+    background-color: #0288d1;
+    margin-top: 10px;
+  }
+
+  #copy-btn:hover {
+    background-color: #01579b;
+  }
+
+</style>
+</head>
+<body>
+
+<h1>🧠 Random Essay Topic & AI Prompt Generator</h1>
+<p>Pilih bidang studi, tingkat kesulitan, dan gaya tulisan untuk menemukan topik esai inspiratif.</p>
+
+<div>
+  <select id="subject">
+    <option value="">-- Pilih Bidang Studi --</option>
+    <option value="agama">Agama</option>
+    <option value="teknologi">Teknologi</option>
+    <option value="sosial">Sosial</option>
+    <option value="lingkungan">Lingkungan</option>
+    <option value="bahasa">Bahasa</option>
+    <option value="ekonomi">Ekonomi</option>
+    <option value="pendidikan">Pendidikan</option>
+    <option value="psikologi">Psikologi</option>
+    <option value="politik">Politik</option>
+    <option value="kesehatan">Kesehatan</option>
+    <option value="sejarah">Sejarah</option>
+    <option value="sastra">Sastra</option>
+    <option value="budaya">Budaya</option>
+    <option value="sains">Sains</option>
+  </select>
+
+  <select id="difficulty">
+    <option value="">-- Pilih Tingkat Kesulitan --</option>
+    <option value="mudah">Mudah</option>
+    <option value="sedang">Sedang</option>
+    <option value="sulit">Sulit</option>
+  </select>
+
+  <select id="style">
+    <option value="">-- Pilih Gaya Tulisan --</option>
+    <option value="ilmiah">Ilmiah</option>
+    <option value="naratif">Naratif</option>
+    <option value="reflektif">Reflektif</option>
+    <option value="argumentatif">Argumentatif</option>
+  </select>
+
+  <button onclick="generateTopic()">🎯 Buat Topik</button>
+</div>
+
+<div id="topic-box" class="hidden">
+  <div id="topic"></div>
+  <button onclick="generatePrompt()">✨ Buat Prompt ke AI</button>
+</div>
+
+<div id="prompt-box" class="hidden">
+  <h3>Prompt untuk AI:</h3>
+  <div id="prompt"></div>
+  <button id="copy-btn" onclick="copyPrompt()">📋 Salin Prompt</button>
+</div>
+
+<script>
+const topics = {
+  agama: [
+    "Peran spiritualitas dalam membangun kedamaian batin remaja.",
+    "Tantangan moderasi beragama di era media sosial.",
+    "Nilai ibadah dalam membentuk etika sosial masyarakat.",
+    "Makna toleransi antaragama dalam kehidupan multikultural."
+  ],
+  teknologi: [
+    "Dampak kecerdasan buatan terhadap masa depan pendidikan.",
+    "Perkembangan teknologi hijau untuk masa depan berkelanjutan.",
+    "Bagaimana teknologi memengaruhi privasi dan etika digital.",
+    "Inovasi teknologi dan tantangan kemanusiaan."
+  ],
+  sosial: [
+    "Perubahan nilai sosial di era digital.",
+    "Kesenjangan sosial dan peran pendidikan inklusif.",
+    "Empati sosial di tengah kompetisi global.",
+    "Budaya gotong royong dalam masyarakat modern."
+  ],
+  lingkungan: [
+    "Inisiatif lokal dalam menjaga kelestarian hutan.",
+    "Strategi mengurangi sampah plastik di sekolah dan rumah.",
+    "Krisis air bersih dan dampaknya terhadap kesejahteraan manusia.",
+    "Kebijakan lingkungan berkelanjutan di Indonesia."
+  ],
+  bahasa: [
+    "Bahasa sebagai sarana diplomasi budaya.",
+    "Perubahan kosakata remaja di era digital.",
+    "Peran bahasa daerah dalam memperkuat identitas nasional.",
+    "Literasi bahasa dan pembentukan pola pikir kritis."
+  ],
+  ekonomi: [
+    "Transformasi ekonomi digital di Indonesia.",
+    "Dampak ekonomi kreatif terhadap lapangan kerja baru.",
+    "Keadilan ekonomi dalam sistem pasar bebas.",
+    "Etika bisnis di era kompetisi global."
+  ],
+  pendidikan: [
+    "Peran guru dalam membentuk karakter generasi AI.",
+    "Inovasi pembelajaran berbasis teknologi.",
+    "Kesenjangan pendidikan antarwilayah di Indonesia.",
+    "Pendidikan nilai dan moral di sekolah modern."
+  ],
+  psikologi: [
+    "Dampak media sosial terhadap konsep diri remaja.",
+    "Strategi mengatasi kecemasan akademik pada pelajar.",
+    "Hubungan antara kebahagiaan dan produktivitas belajar.",
+    "Kecerdasan emosional sebagai dasar kepemimpinan yang efektif."
+  ],
+  politik: [
+    "Peran generasi muda dalam membangun demokrasi yang sehat.",
+    "Etika komunikasi politik di era media digital.",
+    "Kepemimpinan visioner dan keadilan sosial.",
+    "Pengaruh opini publik terhadap kebijakan pemerintah."
+  ],
+  kesehatan: [
+    "Kesehatan mental di lingkungan pendidikan.",
+    "Gaya hidup aktif untuk mencegah penyakit kronis.",
+    "Pola makan sehat dalam kehidupan modern.",
+    "Teknologi medis dan masa depan kesehatan masyarakat."
+  ],
+  sejarah: [
+    "Peran tokoh nasional dalam memperjuangkan kemerdekaan.",
+    "Dinamika perubahan sosial pascakemerdekaan.",
+    "Kolonialisme dan dampaknya terhadap budaya lokal.",
+    "Relevansi nilai sejarah bagi generasi milenial."
+  ],
+  sastra: [
+    "Peran sastra dalam membentuk empati sosial.",
+    "Analisis nilai moral dalam karya sastra klasik.",
+    "Sastra sebagai refleksi perubahan budaya.",
+    "Hubungan antara puisi dan ekspresi spiritualitas."
+  ],
+  budaya: [
+    "Pelestarian budaya lokal di era globalisasi.",
+    "Transformasi tradisi melalui media digital.",
+    "Seni sebagai sarana diplomasi budaya.",
+    "Nilai-nilai budaya dalam membentuk karakter bangsa."
+  ],
+  sains: [
+    "Peran sains dalam menghadapi krisis iklim.",
+    "Etika dalam penelitian ilmiah modern.",
+    "Kontribusi sains terhadap kesejahteraan manusia.",
+    "Inovasi sains dalam bidang energi terbarukan."
+  ]
+};
+
+let currentTopic = "";
+let currentSubject = "";
+let currentStyle = "";
+let currentDifficulty = "";
+
+function generateTopic() {
+  const subject = document.getElementById("subject").value;
+  const difficulty = document.getElementById("difficulty").value;
+  const style = document.getElementById("style").value;
+
+  if (!subject || !difficulty || !style) {
+    alert("Silakan pilih bidang studi, tingkat kesulitan, dan gaya tulisan!");
+    return;
+  }
+
+  const list = topics[subject];
+  const randomIndex = Math.floor(Math.random() * list.length);
+  currentTopic = list[randomIndex];
+  currentSubject = subject;
+  currentStyle = style;
+  currentDifficulty = difficulty;
+
+  document.getElementById("topic").innerText = currentTopic;
+  document.getElementById("topic-box").classList.remove("hidden");
+  document.getElementById("prompt-box").classList.add("hidden");
+}
+
+function generatePrompt() {
+  const promptText = `
+Tulis sebuah esai dengan topik:
+"${currentTopic}"
+
+🧭 Detail Penulisan:
+- Bidang studi: ${capitalize(currentSubject)}
+- Tingkat kesulitan: ${capitalize(currentDifficulty)}
+- Gaya tulisan: ${capitalize(currentStyle)}
+- Panjang tulisan: 500–700 kata
+- Gunakan bahasa Indonesia akademik yang sistematis, empiris, dan logis.
+- Sertakan pengantar yang kontekstual, pembahasan yang argumentatif, dan kesimpulan reflektif.
+- Hubungkan topik dengan kondisi masyarakat atau fenomena aktual.
+
+🎯 Tujuan:
+Memberikan analisis yang mendalam dan bernilai ilmiah sesuai konteks bidang studi yang dipilih.
+`;
+  document.getElementById("prompt").innerText = promptText.trim();
+  document.getElementById("prompt-box").classList.remove("hidden");
+}
+
+function copyPrompt() {
+  const text = document.getElementById("prompt").innerText;
+  navigator.clipboard.writeText(text);
+  alert("Prompt berhasil disalin ke clipboard ✅");
+}
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+</script>
+</body>
+</html>
